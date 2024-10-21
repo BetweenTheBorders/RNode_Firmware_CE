@@ -315,6 +315,9 @@ bool init_pmu() {
             PMU = NULL;
         } else {
             Serial.println("AXP2101 PMU init succeeded, using AXP2101 PMU");
+            if(ENABLE_GPS){
+               Serial.println("GPS is enabled"); 
+            }
         }
     }
 
@@ -326,6 +329,9 @@ bool init_pmu() {
             PMU = NULL;
         } else {
             Serial.println("AXP192 PMU init succeeded, using AXP192 PMU");
+            if(ENABLE_GPS){
+                Serial.println("GPS is enabled, but untested on AXP192");
+            }
         }
     }
 
@@ -359,7 +365,9 @@ bool init_pmu() {
       PMU->enablePowerOutput(XPOWERS_LDO2);
 
       // Turn on GPS
-      //PMU->enablePowerOutput(XPOWERS_LDO3);
+      if(ENABLE_GPS){
+          PMU->enablePowerOutput(XPOWERS_LDO3);
+      }
 
       // protected oled power source
       PMU->setProtectedChannel(XPOWERS_DCDC1);
@@ -414,9 +422,14 @@ bool init_pmu() {
       PMU->enablePowerOutput(XPOWERS_ALDO2);
 
       // GNSS VDD
-      //PMU->enablePowerOutput(XPOWERS_ALDO3);
+      // NOTE: This is already done in the GPS line above. As GPS is a subset of GNSS, 
+      // I think this is legacy/boilerplate code that can likely be consolidated. -Faragher
+      if(ENABLE_GPS){
+          PMU->enablePowerOutput(XPOWERS_ALDO3);
+      }
 
       // GNSS RTC PowerVDD
+      // Is this to charge the battery backup for RTC? Investigtae, this is important -Fargaher
       //PMU->enablePowerOutput(XPOWERS_VBACKUP);
     }
 
